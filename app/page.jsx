@@ -426,132 +426,137 @@ export default function Dashboard() {
                           </div>
                         </div>
                       ) : (
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 mb-4">
                           No assets added yet
                         </p>
                       )}
                     </CardContent>
-                    <CardFooter className="flex justify-between">
-                      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="bg-blue-50 text-blue-600 hover:bg-blue-100 border-blue-200"
-                            onClick={() => {
-                              setSelectedPresentation(presentation);
-                              setAssets({
-                                logos: [null, null, null],
-                                video: null,
-                              });
-                            }}
-                          >
-                            <Upload className="w-4 h-4 mr-2" />
-                            Add Assets
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                          <DialogHeader>
-                            <DialogTitle className="text-2xl font-semibold mb-4">
-                              Add Presentation Assets
-                            </DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-6 py-4">
-                            <div className="space-y-4">
-                              <h4 className="font-medium text-lg">Logos</h4>
-                              <div className="grid grid-cols-3 gap-4">
-                                {[0, 1, 2].map((index) => (
-                                  <div key={index} className="space-y-2">
-                                    <div className="relative">
-                                      <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleFileChange(
-                                          "logo",
-                                          index
-                                        )}
-                                        className="hidden"
-                                        id={`logo-${index}`}
-                                      />
-                                      <label
-                                        htmlFor={`logo-${index}`}
-                                        className="flex flex-col items-center justify-center w-full h-32 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
-                                      >
-                                        {assets.logos[index] ? (
-                                          <img
-                                            src={assets.logos[index]}
-                                            alt={`Logo ${index + 1}`}
-                                            className="w-20 h-20 object-contain"
-                                          />
-                                        ) : (
-                                          <>
-                                            <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
-                                            <span className="text-sm text-gray-500">
-                                              Logo {index + 1}
-                                            </span>
-                                          </>
-                                        )}
-                                      </label>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                            <div className="space-y-4">
-                              <h4 className="font-medium text-lg">Video</h4>
-                              <div className="relative">
-                                <input
-                                  type="file"
-                                  accept="video/*"
-                                  onChange={handleFileChange("video")}
-                                  className="hidden"
-                                  id="video-upload"
-                                />
-                                <label
-                                  htmlFor="video-upload"
-                                  className="flex flex-col items-center justify-center w-full h-40 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
-                                >
-                                  {assets.video ? (
-                                    <video
-                                      className="w-full h-full object-contain"
-                                      controls
-                                    >
-                                      <source
-                                        src={assets.video}
-                                        type="video/mp4"
-                                      />
-                                    </video>
-                                  ) : (
-                                    <>
-                                      <Play className="w-8 h-8 text-gray-400 mb-2" />
-                                      <span className="text-sm text-gray-500">
-                                        Upload Video
-                                      </span>
-                                    </>
-                                  )}
-                                </label>
-                              </div>
-                            </div>
+                    <CardFooter className="flex gap-4">
+                      {!presentation.hasAssets && (
+                        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                          <DialogTrigger asChild>
                             <Button
-                              onClick={handleSaveAssets}
-                              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                              disabled={
-                                !assets.video ||
-                                assets.logos.some((logo) => !logo)
-                              }
+                              variant="outline"
+                              className="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 border-blue-200"
+                              onClick={() => {
+                                setSelectedPresentation(presentation);
+                                setAssets({
+                                  logos: [null, null, null],
+                                  video: null,
+                                });
+                              }}
                             >
-                              Save Assets
+                              <Upload className="w-4 h-4 mr-2" />
+                              Add Assets
                             </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                      <Button
-                        variant="default"
-                        onClick={() => router.push(`/${presentation.id}`)}
-                        disabled={!presentation.hasAssets}
-                        className="bg-gray-900 text-white hover:bg-gray-800"
-                      >
-                        View Presentation
-                      </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                            <DialogHeader>
+                              <DialogTitle className="text-2xl font-semibold mb-4">
+                                Add Presentation Assets
+                              </DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-6 py-4">
+                              <div className="space-y-4">
+                                <h4 className="font-medium text-lg">Logos</h4>
+                                <div className="grid grid-cols-3 gap-4">
+                                  {[0, 1, 2].map((index) => (
+                                    <div key={index} className="space-y-2">
+                                      <div className="relative">
+                                        <input
+                                          type="file"
+                                          accept="image/*"
+                                          onChange={handleFileChange(
+                                            "logo",
+                                            index
+                                          )}
+                                          className="hidden"
+                                          id={`logo-${index}`}
+                                        />
+                                        <label
+                                          htmlFor={`logo-${index}`}
+                                          className="flex flex-col items-center justify-center w-full h-32 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                                        >
+                                          {assets.logos[index] ? (
+                                            <img
+                                              src={assets.logos[index]}
+                                              alt={`Logo ${index + 1}`}
+                                              className="w-20 h-20 object-contain"
+                                            />
+                                          ) : (
+                                            <>
+                                              <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
+                                              <span className="text-sm text-gray-500">
+                                                Logo {index + 1}
+                                              </span>
+                                            </>
+                                          )}
+                                        </label>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="space-y-4">
+                                <h4 className="font-medium text-lg">Video</h4>
+                                <div className="relative">
+                                  <input
+                                    type="file"
+                                    accept="video/*"
+                                    onChange={handleFileChange("video")}
+                                    className="hidden"
+                                    id="video-upload"
+                                  />
+                                  <label
+                                    htmlFor="video-upload"
+                                    className="flex flex-col items-center justify-center w-full h-40 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                                  >
+                                    {assets.video ? (
+                                      <video
+                                        className="w-full h-full object-contain"
+                                        controls
+                                      >
+                                        <source
+                                          src={assets.video}
+                                          type="video/mp4"
+                                        />
+                                      </video>
+                                    ) : (
+                                      <>
+                                        <Play className="w-8 h-8 text-gray-400 mb-2" />
+                                        <span className="text-sm text-gray-500">
+                                          Upload Video
+                                        </span>
+                                      </>
+                                    )}
+                                  </label>
+                                </div>
+                              </div>
+                              <Button
+                                onClick={handleSaveAssets}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                                disabled={
+                                  !assets.video ||
+                                  assets.logos.some((logo) => !logo)
+                                }
+                              >
+                                Save Assets
+                              </Button>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      )}
+
+                      {presentation.hasAssets && (
+                        <Button
+                          variant="default"
+                          onClick={() => router.push(`/${presentation.id}`)}
+                          disabled={!presentation.hasAssets}
+                          className="bg-gray-900 text-white hover:bg-gray-800 flex-1"
+                        >
+                          View Presentation
+                        </Button>
+                      )}
                     </CardFooter>
                   </Card>
                 ))}
