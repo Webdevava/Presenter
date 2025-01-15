@@ -1,8 +1,10 @@
 // src/app/[presentationId]/page.js
 "use client";
-import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Thermometer, Droplets, Wind } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Thermometer, Droplets, Wind, AlertCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const getAssetsFromDB = async (presentationId) => {
   const request = indexedDB.open("presentationsDB", 1);
@@ -22,8 +24,10 @@ const getAssetsFromDB = async (presentationId) => {
 };
 
 export default function PresentationView({ params }) {
+  const router = useRouter();
   const [presentation, setPresentation] = useState(null);
   const [assets, setAssets] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [sensorData, setSensorData] = useState({
     temperature: 23.5,
     humidity: 45,
@@ -47,10 +51,12 @@ export default function PresentationView({ params }) {
               const assets = await getAssetsFromDB(params.presentationId);
               setAssets(assets);
             }
+            setLoading(false);
           };
         };
       } catch (error) {
         console.error("Error loading presentation:", error);
+        setLoading(false);
       }
     };
 
@@ -68,9 +74,41 @@ export default function PresentationView({ params }) {
     return () => clearInterval(interval);
   }, [params.presentationId]);
 
-  if (!presentation || !assets) return null;
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <p className="text-lg text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
-  // Rest of your component remains the same, just use assets instead of presentation.assets
+  if (!presentation || !assets) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-6 h-6 text-red-500" />
+              <CardTitle className="text-xl">Assets Not Found</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-gray-500">
+              No assets were found for this presentation. Please go to the
+              dashboard to add the required assets.
+            </p>
+            <Button
+              onClick={() => router.push("/")}
+              className="w-full bg-blue-500 hover:bg-blue-600"
+            >
+              Go to Dashboard
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header with two logos */}
